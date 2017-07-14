@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity
     RecyclerView rvnews ;
     RecyclerView rvpuzzles ;
     GameAdapter gameadapter;
+    ArrayList<games> gamesArrayList=generategame();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,14 @@ public class MainActivity extends AppCompatActivity
         LinearLayoutManager li = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         rvgames.setLayoutManager(li);
         rvgames.setAdapter(gameadapter);
+        static ArrayList<games>generategame() {
+            ArrayList<games> gamesArrayList = new ArrayList<>();
+            gamesArrayList.add(new games("Fidget", R.drawable.fidget));
+            gamesArrayList.add(new games("Final Fantasy", R.drawable.finalfantasy));
+            gamesArrayList.add(new games("Hill Climbing Racing", R.drawable.hillclimb));
+            return gamesArrayList;
+        }
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
