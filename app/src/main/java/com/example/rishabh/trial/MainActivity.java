@@ -1,6 +1,8 @@
 package com.example.rishabh.trial;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,7 +20,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.rishabh.trial.Activities.NewsActivity;
+import com.example.rishabh.trial.Activities.NewsActivityHindu;
+import com.example.rishabh.trial.Adapters.EducationAdapter;
 import com.example.rishabh.trial.Adapters.GameAdapter;
+import com.example.rishabh.trial.Adapters.NewsAdapter;
+import com.example.rishabh.trial.POJOs.News;
+import com.example.rishabh.trial.POJOs.education;
 import com.example.rishabh.trial.POJOs.games;
 
 import java.util.ArrayList;
@@ -29,9 +37,49 @@ public class MainActivity extends AppCompatActivity
     RecyclerView rvgames ;
     RecyclerView rveduc ;
     RecyclerView rvnews ;
-    RecyclerView rvpuzzles ;
     GameAdapter gameadapter;
-    ArrayList<games> gamesArrayList=generategame();
+    EducationAdapter educationadapter;
+    NewsAdapter newsadapter;
+
+    static ArrayList<games> generategame() {
+        ArrayList<games> gamesArrayList = new ArrayList<>();
+        gamesArrayList.add(new games("Clash of Clans", R.drawable.clash));
+        gamesArrayList.add(new games("Elevate", R.drawable.elevate));
+        gamesArrayList.add(new games("Fidget Spinner", R.drawable.fidget));
+        gamesArrayList.add(new games("Final Fantasy", R.drawable.finalfantasy));
+        gamesArrayList.add(new games("Hill Climbing", R.drawable.hillclimb));
+        gamesArrayList.add(new games("Mario", R.drawable.mario));
+        gamesArrayList.add(new games("Teen Patti", R.drawable.patti));
+        gamesArrayList.add(new games("Score Hero", R.drawable.score));
+        gamesArrayList.add(new games("Stick Cricket", R.drawable.stick));
+        return gamesArrayList;
+    }
+
+    static ArrayList<education> generateedu() {
+        ArrayList<education> educationArrayList = new ArrayList<>();
+        educationArrayList.add(new education("Cat Mock Tests", R.drawable.cat));
+        educationArrayList.add(new education("Interview Questions", R.drawable.inter));
+        educationArrayList.add(new education("Mock Cat papers", R.drawable.mock));
+        educationArrayList.add(new education("Ted talk", R.drawable.ted));
+        educationArrayList.add(new education("Vocabulary Builder", R.drawable.vocab));
+        return educationArrayList;
+    }
+    static ArrayList<News> generatenews(){
+        ArrayList<News> NewsArrayList = new ArrayList<>();
+        NewsArrayList.add(new News("Times of India",R.drawable.toi));
+        NewsArrayList.add(new News("The Hindu",R.drawable.hindu));
+        return NewsArrayList;
+
+    }
+    private void sendfeedback() {
+        final Intent _Intent = new Intent(android.content.Intent.ACTION_SEND);
+        _Intent.setType("text/html");
+        _Intent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]
+                { getString(R.string.mail_feedback_email) });
+        _Intent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.mail_feedback_subject));
+        _Intent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.mail_feedback_message));
+        startActivity(Intent.createChooser(_Intent, getString(R.string.title_send_feedback)));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +88,93 @@ public class MainActivity extends AppCompatActivity
         rvgames = (RecyclerView)findViewById(R.id.rvgames);
         rveduc = (RecyclerView)findViewById(R.id.rveduc);
         rvnews = (RecyclerView)findViewById(R.id.rvnews);
-        rvpuzzles = (RecyclerView)findViewById(R.id.rvpuzzles);
-        gameadapter = new GameAdapter(this,new ArrayList<games>());
+
+
+        ArrayList<games> gamesArrayList = generategame();
+        ArrayList<education> educationArrayList = generateedu();
+        ArrayList<News> NewsArrayList = generatenews();
+
+
+        gameadapter = new GameAdapter(this, gamesArrayList);
         LinearLayoutManager li = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         rvgames.setLayoutManager(li);
         rvgames.setAdapter(gameadapter);
-        static ArrayList<games>generategame() {
-            ArrayList<games> gamesArrayList = new ArrayList<>();
-            gamesArrayList.add(new games("Fidget", R.drawable.fidget));
-            gamesArrayList.add(new games("Final Fantasy", R.drawable.finalfantasy));
-            gamesArrayList.add(new games("Hill Climbing Racing", R.drawable.hillclimb));
-            return gamesArrayList;
-        }
+
+        educationadapter = new EducationAdapter(this,educationArrayList);
+        LinearLayoutManager li1 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        rveduc.setLayoutManager(li1);
+        rveduc.setAdapter(educationadapter);
+
+        newsadapter = new NewsAdapter(this,NewsArrayList);
+        LinearLayoutManager li2 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+        rvnews.setLayoutManager(li2);
+        rvnews.setAdapter(newsadapter);
+        newsadapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(String itemid) {
+                try{
+                    if(itemid.equalsIgnoreCase("Times of India")) {
+                        Intent web = new Intent(MainActivity.this, NewsActivity.class);
+                        startActivity(web);
+                    }
+                    else if(itemid.equalsIgnoreCase("The Hindu")) {
+                        Intent web = new Intent(MainActivity.this, NewsActivityHindu.class);
+                        startActivity(web);
+                    }
+                }
+                catch(ActivityNotFoundException ae)
+                {
+                    Toast.makeText(MainActivity.this, "activity not found", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -60,10 +183,10 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                sendfeedback();
             }
         });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -114,16 +237,22 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
+            Toast.makeText(this, "This is camera", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_gallery) {
+            Toast.makeText(this, "This is gallery", Toast.LENGTH_SHORT).show();
 
 
         } else if (id == R.id.nav_slideshow) {
+            Toast.makeText(this, "This is slideshow", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_manage) {
+            Toast.makeText(this, "This is manager", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_share) {
+            Toast.makeText(this, "This is share", Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_send) {
+            Toast.makeText(this, "This is send", Toast.LENGTH_SHORT).show();
 
         }
 

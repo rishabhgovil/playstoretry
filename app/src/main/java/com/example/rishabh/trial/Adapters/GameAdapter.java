@@ -1,6 +1,8 @@
 package com.example.rishabh.trial.Adapters;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +41,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     public void onBindViewHolder(GameViewHolder holder, int position) {
         games thisgame = gamesArrayList.get(position);
         holder.game.setText(thisgame.getGame());
+
         holder.iv.setImageResource(thisgame.getIv());
 
     }
